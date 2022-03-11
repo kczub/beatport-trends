@@ -1,5 +1,14 @@
+# mac
 .DS_Store
-.ipynb_checkpoints
+
+# dirs
 Data
 Temp
+
+# files
 test.ipynb
+app.py
+
+# python
+.ipynb_checkpoints
+__pycache__

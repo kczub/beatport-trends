@@ -102,6 +102,7 @@ def clean_data(raw_data):
         temp.append(data)
     
     clean_data = pd.DataFrame(temp)
+
     clean_data.to_csv(CLEAN_FILE_PATH, index=False)
     return clean_data
 
