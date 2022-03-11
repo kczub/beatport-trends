@@ -14,8 +14,6 @@ url = f'{base_url}/charts/all?start-date={str(yesterday)}&end-date={str(yesterda
 
 BASE_DIR = os.path.dirname(__file__)
 DATA_DIR = os.path.join(BASE_DIR, 'Data')
-TEMP_DIR = os.path.join(BASE_DIR, 'Temp')
-TEMP_FILE_PATH = os.path.join(TEMP_DIR, f'{yesterday}-temp.csv')
 CLEAN_FILE_PATH = os.path.join(DATA_DIR, f'{yesterday}.csv')
 
 
@@ -29,7 +27,6 @@ def get_next_page(html=None):
 
 
 def get_links(url, chart_links=None):
-    """Return a list of links."""
     r = requests.get(url)
     print(url, requests.codes.ok)
     html_string = HTML(html=r.content)
@@ -56,22 +53,16 @@ def get_links(url, chart_links=None):
             get_links(next_url, chart_links=chart_links)
         except AttributeError:
             print("No more pages")
-    else:
-        print("No more pages")
 
     return chart_links
 
 
 def parse_chart(url):
-    """
-    Get genre of every track in a chart, return pandas series
-    """
     r = requests.get(url)
     soup = BeautifulSoup(r.content, 'html.parser')
 
     date = soup.find('span', class_='value').string
     if str(date) != str(yesterday):
-        print("wrong date")
         return None
 
     chart = []
@@ -83,26 +74,19 @@ def parse_chart(url):
         
 
 def scrape(url):
-    """
-    Main scraping function
-    """
     all_links = get_links(url)
-    print("Scraping...")
+
     all_charts = []
     for url in all_links:
         all_charts.append(parse_chart(url))
         time.sleep(1)
 
     data = pd.concat(all_charts)
-
-    os.makedirs(TEMP_DIR, exist_ok=True)
-    data.to_csv(TEMP_FILE_PATH)
     return data
 
 
-def clean_data(df):
-    data = pd.read_csv(df, index_col=0)
-    print("Cleaning")
+def clean_data(raw_data):
+    data = pd.DataFrame(raw_data)
     col = data.columns[0]
     data.rename({col: 'genre'}, axis=1, inplace=True)
 
@@ -124,5 +108,5 @@ def clean_data(df):
 
 
 if __name__ == '__main__':
-    scrape(url=url)
-    clean_data(TEMP_FILE_PATH)
+    data = scrape(url=url)
+    clean_data(raw_data=data)
