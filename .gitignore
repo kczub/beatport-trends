@@ -2,12 +2,9 @@
 .DS_Store
 
 # dirs
+notebooks
 Data
 Temp
-
-# files
-test.ipynb
-app.py
 
 # python
 .ipynb_checkpoints

@@ -8,13 +8,16 @@ from bs4 import BeautifulSoup
 from requests_html import HTML
 
 
+# other_date = '2022-03-12'
 yesterday = datetime.date.today() - datetime.timedelta(days=1)
 base_url = 'https://www.beatport.com'
 url = f'{base_url}/charts/all?start-date={str(yesterday)}&end-date={str(yesterday)}'
+# url2 = f'{base_url}/charts/all?start-date={other_date}&end-date={other_date}'
 
 BASE_DIR = os.path.dirname(__file__)
 DATA_DIR = os.path.join(BASE_DIR, 'Data')
 CLEAN_FILE_PATH = os.path.join(DATA_DIR, f'{yesterday}.csv')
+# CLEAN_FILE_PATH_2 = os.path.join(DATA_DIR, f'{other_date}.csv')
 
 
 def get_next_page(html=None):
@@ -75,7 +78,7 @@ def parse_chart(url):
 
 def scrape(url):
     all_links = get_links(url)
-
+    print("Scraping...")
     all_charts = []
     for url in all_links:
         all_charts.append(parse_chart(url))
@@ -104,6 +107,7 @@ def clean_data(raw_data):
     clean_data = pd.DataFrame(temp)
 
     clean_data.to_csv(CLEAN_FILE_PATH, index=False)
+    print("Done")
     return clean_data
 
 
